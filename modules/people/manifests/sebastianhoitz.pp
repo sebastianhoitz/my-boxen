@@ -19,16 +19,22 @@ class people::sebastianhoitz {
   include vim
 
   $home     = "/Users/${::boxen_user}"
-  $my       = "${home}/my"
-  $dotfiles = "${my}/dotfiles"
+  $develop       = "${home}/develop"
+  $dotfiles = "dotfiles"
 
-  file { $my:
+  file { $develop:
     ensure  => directory
   }
 
   repository { $dotfiles:
-    source  => 'sebastianhoitz/dotfiles',
-    require => File[$my]
+    source  => 'sebastianhoitz/dotfiles'
+  }
+
+  exec { "install dotfiles":
+    cwd      => $dotfiles,
+    command  => "source bootstrap.sh",
+    provider => shell,
+    require  => Repository[$dotfiles]
   }
 
   include osx::global::disable_key_press_and_hold
